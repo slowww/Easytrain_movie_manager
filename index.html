@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <style>
+        html { font-family: sans-serif;}
+        tr:hover {background-color: lavender}
+        #divop {
+
+            display:inline-block;
+            position: absolute;
+            box-sizing: border-box;
+            border: 1px dashed black;
+            background-color: lightcyan;
+            margin-top: 10vh;
+            float: right;
+        }
+
+    </style>
+    <meta charset="UTF-8">
+    <title>Easytrain - Catalogo film</title>
+</head>
+<body>
+
+
+<button onclick="getAll()">LISTA FILM</button>
+
+<h3>RICERCA FILM</h3>
+<!--Ricerca TUTTI oppure in base a: TITOLO, ANNO, DURATA(lunghi >60, corti<60), GENERE, ATTORI/REGISTI COINVOLTI-->
+<label>Titolo:</label>
+<input type="text" name="titolo" id="titolo"><br>
+<button onclick="byTitolo()">Cerca in base al titolo</button>
+<br><br>
+
+<label>Anno: </label>
+<input type="number" name="anno" min="1900" max="2019" id="anno"><br>
+<button onclick="byAnno()">Cerca in base all'anno</button><br><br>
+
+<label>Durata: </label><br>
+<select id="durata">
+    <option value="lungo">Lungo</option>
+    <option value="corto">Corto</option>
+</select>
+<button onclick="byDurata()">Cerca in base alla durata</button><br><br>
+
+<label>Genere:</label>
+<select id="genere" >
+    <option value="horror">Horror</option>
+    <option value="commedia">Commedia</option>
+    <option value="thriller">Thriller</option>
+    <option value="azione">Azione</option>
+</select><br>
+<button onclick="byGenere()">Cerca in base al genere</button>
+<br><br>
+
+<label>Attore/regista: </label>
+<input type="text" name="sogg" id="sogg"><br>
+<button onclick="bySogg()">Cerca in base a attore o regista</button>
+<br><br>
+
+
+<!-----------------UTENTI-------------------------->
+<h3>RICERCA UTENTI che non hanno visualizzato alcun film</h3>
+<button onclick="findUtenti()">CERCA</button>
+
+<!-------------DATE RANGE------------------------>
+<h3>Film con più visualizzazioni, tramite range date: </h3>
+<label>Da: </label>
+<input type="text" id="data1" placeholder="yyyy-mm-dd"><br>
+<label>A: </label>
+<input type="text" id="data2" placeholder="yyyy-mm-dd"><br>
+<button onclick="findVisual()">CERCA</button>
+
+
+<div id="divop">
+
+</div>
+
+
+</body>
+</html>
+
+
+
+<script>
+    function getAll(){
+        $("#divop").empty();
+
+
+        $.ajax({
+            type: 'GET',
+            url: 'http://localhost/Easytrain/film.php',
+            success: function (data) {
+                if(data.msg)
+                {
+                    $("#divop").append(data.msg);
+                }else {
+                    $("#divop").append('<table border=1><tr><td>ID FILM</td><td>TITOLO</td><td>ANNO</td><td>DURATA</td><td>GENERE</td></tr>');
+                    $.each(data, function (i, dato) {
+                        $("table").append('<tr><td>' + dato.id_film + '</td><td>' + dato.titolo + '</td><td>' + dato.anno_film + '</td><td>' + dato.durata + '</td><td>' + dato.nome_gen + '</td></tr>');
+
+                    });
+                    $("#divop").append('</table>');
+                }
+
+
+            }
+        });
+
+    }
+
+</script>
+
+<script>
+    function byTitolo(){
+    $("#divop").empty();
+
+    var titolo = $("#titolo").val();
+
+    if(!titolo)
+    {
+        alert('Non è stato inserito alcun valore! Riprova.');
+        return;
+    }else
+    {
+        $.ajax({
+            type: 'GET',
+            url: 'http://localhost/Easytrain/film.php?titolo='+titolo,
+            success: function (data) {
+                if(data.msg)
+                {
+                    $("#divop").append(data.msg);
+                }else {
+                    $("#divop").append('<table border=1><tr><td>TITOLO</td><td>ANNO</td><td>DURATA</td></tr>');
+                    $.each(data, function (i, dato) {
+                        $("table").append('<tr><td>' + dato.titolo + '</td><td>' + dato.anno_film + '</td><td>' + dato.durata + '</td></tr>');
+
+                    });
+                    $("#divop").append('</table>');
+                }
+                }
+
+
+            });
+        }
+
+
+
+    }
+
+</script>
+
+<script>
+    function byAnno(){
+        $("#divop").empty();
+
+        var anno = $("#anno").val();
+
+        if(!anno)
+        {
+            alert('Non è stato inserito alcun valore! Riprova.');
+            return;
+        }else {
+
+            $.ajax({
+                type: 'GET',
+                url: 'http://localhost/Easytrain/film.php?anno=' + anno,
+                success: function (data) {
+                    if(data.msg)
+                    {
+                        $("#divop").append(data.msg);
+                    }else {
+                        $("#divop").append('<table border=1><tr><td>TITOLO</td><td>ANNO</td><td>DURATA</td></tr>');
+                        $.each(data, function (i, dato) {
+                            $("table").append('<tr><td>' + dato.titolo + '</td><td>' + dato.anno_film + '</td><td>' + dato.durata + '</td></tr>');
+
+                        });
+                        $("#divop").append('</table>');
+                    }
+
+
+                }
+            });
+
+        }
+    }
+
+</script>
+
+
+<script>
+    function byDurata(){
+        $("#divop").empty();
+
+        var durata = $("#durata").val();
+        console.log(durata);
+        $.ajax({
+            type: 'GET',
+            url: 'http://localhost/Easytrain/film.php?durata='+durata,
+            success: function (data) {
+                if(data.msg)
+                {
+                    $("#divop").append(data.msg);
+                }else {
+                    $("#divop").append('<table border=1><tr><td>TITOLO</td><td>ANNO</td><td>DURATA</td></tr>');
+                    $.each(data, function (i, dato) {
+                        $("table").append('<tr><td>' + dato.titolo + '</td><td>' + dato.anno_film + '</td><td>' + dato.durata + '</td></tr>');
+
+                    });
+                    $("#divop").append('</table>');
+                }
+
+
+            }
+        });
+
+    }
+</script>
+
+<script>
+    function byGenere(){
+        $("#divop").empty();
+
+        var genere = $("#genere").val();
+
+        if(!genere)
+        {
+            alert('Non è stato inserito alcun valore! Riprova.');
+            return;
+        }else {
+
+            $.ajax({
+                type: 'GET',
+                url: 'http://localhost/Easytrain/film.php?genere=' + genere,
+                success: function (data) {
+                    console.log(data);
+
+                    if(data.msg)
+                    {
+                        $("#divop").append(data.msg);
+                    }else
+                    {
+                        $("#divop").append('<table border=1><tr><td>TITOLO</td><td>ANNO</td><td>DURATA</td></tr>');
+                        $.each(data, function (i, dato) {
+                            $("table").append('<tr><td>' + dato.titolo + '</td><td>' + dato.anno_film + '</td><td>' + dato.durata + '</td></tr>');
+
+                        });
+                        $("#divop").append('</table>');
+                    }
+
+
+
+
+                }
+            });
+
+        }
+    }
+</script>
+
+<script>
+    function bySogg(){
+        $("#divop").empty();
+
+        var sogg = $("#sogg").val();
+
+        if(!titolo)
+        {
+            alert('Non è stato inserito alcun valore! Riprova.');
+            return;
+        }else
+        {
+            $.ajax({
+                type: 'GET',
+                url: 'http://localhost/Easytrain/film.php?sogg='+sogg,
+                success: function (data) {
+                    if(data.msg)
+                    {
+                        $("#divop").append(data.msg);
+                    }else {
+                        $("#divop").append('<table border=1><tr><td>TITOLO</td><td>ANNO</td><td>DURATA</td></tr>');
+                        $.each(data, function (i, dato) {
+                            $("table").append('<tr><td>' + dato.titolo + '</td><td>' + dato.anno_film + '</td><td>' + dato.durata + '</td></tr>');
+
+                        });
+                        $("#divop").append('</table>');
+                    }
+
+
+                }
+            });
+
+        }
+
+
+    }
+
+</script>
+
+<script>
+    function findUtenti(){
+        $("#divop").empty();
+
+
+        $.ajax({
+            type: 'GET',
+            url: 'http://localhost/Easytrain/utente.php',
+            success: function (data) {
+                if(data.msg)
+                {
+                    $("#divop").append(data.msg);
+                }else {
+                    $("#divop").append('<table border=1><tr><td>ID UTENTE</td><td>NOME</td><td>COGNOME</td></tr>');
+                    $.each(data, function (i, dato) {
+                        $("table").append('<tr><td class="id">' + dato.id_ut + '</td><td>' + dato.nome_ut + '</td><td>' + dato.cogn_ut + '</td></tr>');
+
+                    });
+                    $("#divop").append('</table>');
+                }
+
+
+            }
+        });
+
+    }
+
+</script>
+
+<script>
+    function findVisual(){
+        $("#divop").empty();
+        var data1 = $("#data1").val();
+        var data2 = $("#data2").val();
+
+        $.ajax({
+            type: 'GET',
+            url: 'http://localhost/Easytrain/visual.php?data1='+data1+'&data2='+data2,
+            success: function (data) {
+                if(data.msg)
+                {
+                    $("#divop").append(data.msg);
+                    return;
+                }else {
+                    $("#divop").append('<table border=1><tr><td>TITOLO</td></tr>');
+                    $.each(data, function (i, dato) {
+                        $("table").append('<tr><td class="id">' + dato.titolo + '</td></tr>');
+
+                    });
+                    $("#divop").append('</table>');
+                }
+
+
+            }
+        });
+
+    }
+
+</script>
+
+

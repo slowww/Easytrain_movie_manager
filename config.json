@@ -1,0 +1,6 @@
+{
+    "server": "localhost",
+    "db": "catalogo_film",
+    "user": "root",
+    "pw":""
+}

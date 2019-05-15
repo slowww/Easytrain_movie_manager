@@ -1,0 +1,15 @@
+select * from film innerjoin appartenenze on id_film = id_film_fk inner join generi on id_gen_fk = id_gen
+order by nome_gen, anno_film;
+
+select id_ut, nome_ut, cogn_ut
+from utenti 
+where id_ut not in (select id_ut
+			from utenti inner join visual);
+
+
+select titolo, count(id_film_fk) as freq
+from film inner join visual on id_film = id_film_fk
+order by freq DESC
+where data_visual is between 'yyyy-mm-dd hh:mm:ss' and 'yyy-mm-dd hh:mm:ss'
+group by id_film_fk
+limit 1;
